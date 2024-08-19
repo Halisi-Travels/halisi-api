@@ -8,9 +8,9 @@ exports.register = async (req, res, next) => {
   const { name, email, password, role } = req.body;
 
   try {
-    const user = await getUserByEmail(email);
+    const userExists = await getUserByEmail(email);
 
-    if (user) throwError("An account with that email exists!", 409);
+    if (userExists) throwError("An account with that email exists!", 409);
 
     const hashedPass = await bcrypt.hash(password, 12);
 
@@ -21,9 +21,17 @@ exports.register = async (req, res, next) => {
       role: role || "candidate",
     };
 
-    await addUser(userData);
+    const user = await addUser(userData);
 
-    res.status(201).json({ msg: "successfully registered!" });
+    const token = jwt.sign(
+      {
+        email: user.email,
+        userId: user._id.toString(),
+      },
+      process.env.JWT_SECRET_TOKEN
+    );
+
+    res.status(201).json({ msg: "successfully registered!", user, token });
   } catch (err) {
     next(err);
   }

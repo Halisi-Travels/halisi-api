@@ -19,6 +19,8 @@ exports.getJob = async (req, res, next) => {
   try {
     const jobId = req.params.id;
 
+    console.log(jobId);
+
     const job = await getJobById(jobId);
 
     res.status(200).json(job);
@@ -30,6 +32,8 @@ exports.getJob = async (req, res, next) => {
 exports.newJob = async (req, res, next) => {
   try {
     const { title, location, type, client, requirements, roles } = req.body;
+
+    console.log(req.body);
 
     const jobData = {
       title: title,

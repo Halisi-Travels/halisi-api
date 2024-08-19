@@ -19,7 +19,12 @@ app
 
 const port = process.env.PORT || 4000;
 
-app.use("/api/v1/auth", authRoutes).use("/api/v1/jobs", jobRoutes);
+const routes = [
+  { path: "/api/v1/auth", handler: authRoutes },
+  { path: "/api/v1/jobs", handler: jobRoutes },
+];
+
+routes.forEach((route) => app.use(route.path, route.handler));
 
 app.use((err, req, res, next) => {
   const message = err.message,
@@ -30,5 +35,7 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(port, () => {
-  console.log(`${port} is open for requests`);
+  console.log(`Port ${port} is ready for requests`);
 });
+
+module.exports = app
